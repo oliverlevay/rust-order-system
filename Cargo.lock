@@ -694,15 +694,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "da32515d9f6e6e489d7bc9d84c71b060db7247dc035bbe44eac88cf87486d8d5"
 
 [[package]]
-name = "order-system"
-version = "0.1.0"
-dependencies = [
- "actix-web",
- "derive_more",
- "serde",
-]
-
-[[package]]
 name = "parking_lot"
 version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -828,6 +819,15 @@ name = "regex-syntax"
 version = "0.6.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f497285884f3fcff424ffc933e56d7cbca511def0c9831a7f9b5f6153e3cc89b"
+
+[[package]]
+name = "rust-order-system"
+version = "0.1.0"
+dependencies = [
+ "actix-web",
+ "derive_more",
+ "serde",
+]
 
 [[package]]
 name = "rustc_version"
