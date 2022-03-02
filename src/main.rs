@@ -6,6 +6,7 @@ use actix_web::{
 use derive_more::{Display, Error};
 use serde::Serialize;
 use std::sync::Mutex;
+use std::env;
 
 #[derive(Debug, Display, Error)]
 enum UserError {
@@ -110,6 +111,11 @@ async fn main() -> std::io::Result<()> {
     let orders = web::Data::new(AppState {
         orders: Mutex::new(Vec::new()),
     });
+    // Get the port number to listen on.
+    let port = env::var("PORT")
+        .unwrap_or_else(|_| "8000".to_string())
+        .parse()
+        .expect("PORT must be a number");
     HttpServer::new(move || {
         App::new()
             .app_data(orders.clone())
@@ -118,7 +124,7 @@ async fn main() -> std::io::Result<()> {
             .service(mark_done)
             .service(delete_order)
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("127.0.0.1", port))?
     .run()
     .await
 }
