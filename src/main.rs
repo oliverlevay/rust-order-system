@@ -1,41 +1,14 @@
-use actix_web::{
-    delete, error, get,
-    http::{header::ContentType, StatusCode},
-    post, put, web, App, HttpResponse, HttpServer, Responder, Result,
-};
-use derive_more::{Display, Error};
-use serde::Serialize;
-use std::sync::Mutex;
+use actix_web::{delete, get, post, put, web, App, HttpServer, Responder, Result};
 use std::env;
+use std::sync::Mutex;
 
-#[derive(Debug, Display, Error)]
-enum UserError {
-    #[display(fmt = "Validation error: {}", message)]
-    ValidationError { message: String },
-}
+mod errors;
+mod mock_data;
+mod models;
 
-impl error::ResponseError for UserError {
-    fn error_response(&self) -> HttpResponse {
-        HttpResponse::build(self.status_code())
-            .insert_header(ContentType::html())
-            .body(self.to_string())
-    }
-    fn status_code(&self) -> StatusCode {
-        match *self {
-            UserError::ValidationError { .. } => StatusCode::BAD_REQUEST,
-        }
-    }
-}
-#[derive(Clone, Serialize)]
-struct Order {
-    id: usize,
-    content: String,
-    is_done: bool,
-}
-
-struct AppState {
-    orders: Mutex<Vec<Order>>,
-}
+use crate::errors::UserError;
+use crate::mock_data::create_mock_orders;
+use crate::models::{AppState, Order};
 
 #[put("/order/{order_id}/done")]
 async fn mark_done(
@@ -109,7 +82,7 @@ async fn get_orders(data: web::Data<AppState>) -> Result<impl Responder> {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let orders = web::Data::new(AppState {
-        orders: Mutex::new(Vec::new()),
+        orders: Mutex::new(create_mock_orders()),
     });
     // Get the port number to listen on.
     let port = env::var("PORT")
